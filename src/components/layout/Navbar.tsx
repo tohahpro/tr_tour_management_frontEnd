@@ -1,5 +1,5 @@
 
-import UserMenu from "@/components/user-menu"
+
 import { Button } from "@/components/ui/button"
 import {
   NavigationMenu,
@@ -14,13 +14,13 @@ import {
 } from "@/components/ui/popover"
 import brandlogo from "@/assets/icons/brand-logo.png"
 import { ModeToggle } from "./ModeToggler"
+import { Link } from "react-router"
 
 // Navigation links with icons for desktop icon-only navigation
 const navigationLinks = [
-  { href: "/", label: "Home", },
-  { href: "/about", label: "About", },
-  { href: "#", label: "Documentation", },
-  { href: "#", label: "Team", },
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
+
 ]
 
 // Language options
@@ -44,7 +44,7 @@ export default function Navbar() {
           {/* Logo */}
           <a href="/" className="text-primary flex items-center hover:text-primary/90">
             <img className="w-2/5" src={brandlogo} alt="" />
-            
+
           </a>
           <div className="flex items-center gap-6">
 
@@ -57,33 +57,37 @@ export default function Navbar() {
 
           {/* Desktop navigation - icon only */}
           <NavigationMenu className="hidden md:flex">
-           <NavigationMenuList className="flex items-start gap-0 md:gap-2">
-                  {navigationLinks.map((link, index) => {
-                    
-                    return (
-                      <NavigationMenuItem key={index} className="w-full">
-                        <NavigationMenuLink
-                          href={link.href}
-                          className="flex-row items-center gap-2 py-1.5"                          
-                        >
-                          <span>{link.label}</span>
-                        </NavigationMenuLink>
-                      </NavigationMenuItem>
-                    )
-                  })}                  
-                </NavigationMenuList>
+            <NavigationMenuList className="flex items-start gap-0 md:gap-2">
+              {navigationLinks.map((link, index) => {
+
+                return (
+                  <NavigationMenuItem key={index} className="w-full">
+                    <NavigationMenuLink>
+                      <Link
+                        className="flex-row items-center gap-2 py-1.5"
+                        to={link.href}>{link.label}
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                )
+              })}
+            </NavigationMenuList>
           </NavigationMenu>
 
           {/* Theme toggle */}
           <span className="hidden md:flex">
-          <ModeToggle/>
+            <ModeToggle />
           </span>
           {/* Language selector */}
 
           {/* Mobile menu trigger */}
           <Popover>
             {/* User menu */}
-            <UserMenu />
+            <Button asChild
+            className="text-sm">
+              <Link to={"/login"}>Login</Link>
+            </Button>
+            {/* <UserMenu /> */}
             <PopoverTrigger asChild>
               <Button
                 className="group size-8 md:hidden"
@@ -122,19 +126,20 @@ export default function Navbar() {
               <NavigationMenu className="max-w-none *:w-full">
                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
                   {navigationLinks.map((link, index) => {
-                    
+
                     return (
                       <NavigationMenuItem key={index} className="w-full">
                         <NavigationMenuLink
-                          href={link.href}
-                          className="flex-row items-center gap-2 py-1.5"                          
+                        asChild
+                          className="flex-row items-center gap-2 py-1.5"
                         >
-                          <span>{link.label}</span>
+                          <Link to={link.href}>{link.label}</Link>
+                          
                         </NavigationMenuLink>
                       </NavigationMenuItem>
                     )
                   })}
-                  <div className="flex justify-center w-full"><ModeToggle/></div>
+                  <div className="flex justify-center w-full"><ModeToggle /></div>
                 </NavigationMenuList>
               </NavigationMenu>
             </PopoverContent>

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useLoginMutation } from "@/redux/features/auth/auth.api";
 import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 
 export function LoginForm({
@@ -14,16 +14,21 @@ export function LoginForm({
 
   const form = useForm();
   const [login] = useLoginMutation()
+  const navigate = useNavigate()
 
-  const onSubmit: SubmitHandler<FieldValues>= async(data)=>{
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     console.log(data);
-    
+
     try {
       const res = await login(data).unwrap();
       toast.success("Logged In Successful")
       console.log(res);
     } catch (err) {
-      console.error(err)      
+      console.error(err)
+      if (err.status === 401) {
+        toast.error("Your account is not Verified.")
+        navigate("/verify")
+      }
     }
   }
 

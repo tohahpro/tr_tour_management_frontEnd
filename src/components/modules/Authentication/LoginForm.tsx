@@ -2,8 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { useForm } from "react-hook-form";
+import { useLoginMutation } from "@/redux/features/auth/auth.api";
+import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
 import { Link } from "react-router";
+import { toast } from "sonner";
 
 export function LoginForm({
   className,
@@ -11,7 +13,19 @@ export function LoginForm({
 }: React.HTMLAttributes<HTMLDivElement>) {
 
   const form = useForm();
+  const [login] = useLoginMutation()
 
+  const onSubmit: SubmitHandler<FieldValues>= async(data)=>{
+    console.log(data);
+    
+    try {
+      const res = await login(data).unwrap();
+      toast.success("Logged In Successful")
+      console.log(res);
+    } catch (err) {
+      console.error(err)      
+    }
+  }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -23,7 +37,7 @@ export function LoginForm({
       </div>
       <div className="grid gap-6">
         <Form {...form}>
-          <form  className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="email"

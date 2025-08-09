@@ -62,7 +62,7 @@ export default function Navbar() {
 
                 return (
                   <NavigationMenuItem key={index} className="w-full">
-                    <NavigationMenuLink>
+                    <NavigationMenuLink asChild>
                       <Link
                         className="flex-row items-center gap-2 py-1.5"
                         to={link.href}>{link.label}

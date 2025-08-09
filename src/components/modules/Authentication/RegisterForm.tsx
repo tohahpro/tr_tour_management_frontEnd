@@ -51,6 +51,8 @@ export function RegisterForm({
       email: data.email,
       password: data.password
     }
+    console.log(data);
+    
 
     try {
 

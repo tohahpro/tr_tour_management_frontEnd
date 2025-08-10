@@ -62,6 +62,10 @@ export function RegisterForm({
       navigate("/verify", {state: data.email})
     } catch (error) {
       console.error(error)
+      if(error.data.message === "User already exist"){
+        toast.error("You are already registered. Please Logged In.")
+      }
+      navigate('/login')
     }
 
   }

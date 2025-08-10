@@ -25,7 +25,14 @@ export function LoginForm({
       console.log(res);
     } catch (err) {
       console.error(err)
-      if (err.status === 401) {
+      // if (err.status === 401) {
+      //   toast.error("Your account is not Verified.")
+      //   navigate("/verify", {state: data.email})
+      // }
+      if(err.data.message === "Password Dose Not Exist"){
+        toast.error("Your Password is Incorrect ")
+      }
+      if(err.data.message === "User is not verified"){
         toast.error("Your account is not Verified.")
         navigate("/verify", {state: data.email})
       }

@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { cn } from "@/lib/utils";
 import { useSendOtpMutation, useVerifyOtpMutation } from "@/redux/features/auth/auth.api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
@@ -26,7 +27,8 @@ export default function Verify() {
   const [sendOtp] = useSendOtpMutation();
   // step-2 
   const [verifyOtp] = useVerifyOtpMutation();
-
+  // step-3 
+  const [timer, setTimer] = useState(180)
 
   const navigate = useNavigate()
 
@@ -37,32 +39,35 @@ export default function Verify() {
     },
   })
 
-  const handleConfirm = async() => {
+  const handleSendOtp = async () => {
+    
     const toastId = toast.loading("Sending OTP")
+    
     try {
       // step-1 
-      const res= await sendOtp({ email: email })
-      if(res.data?.success){
+      const res = await sendOtp({ email: email })
+      if (res.data?.success) {
         toast.success("OTP Sent", { id: toastId })
         setConfirmed(true)
+        setTimer(180)
       }
     } catch (error) {
-        console.log(error);
-        
+      console.log(error);
+
     }
   }
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const toastId = toast.loading("Verifying OTP")
-    const userInfo={
-        email,
-        otp: data.pin
+    const userInfo = {
+      email,
+      otp: data.pin
     };
-    
+
     try {
       // step-2
-      const res= await verifyOtp(userInfo).unwrap()
-      if(res.success){
+      const res = await verifyOtp(userInfo).unwrap()
+      if (res.success) {
         toast.success("OTP verified", { id: toastId })
         setConfirmed(true)
         navigate('/login')
@@ -77,6 +82,24 @@ export default function Verify() {
       navigate('/')
     }
   }, [email, navigate])
+
+
+  // step-3 
+  useEffect(() => {
+    if (!email || !confirmed) {
+      return
+    }
+    const timerId = setInterval(() => {
+      if (email && confirmed) {
+        setTimer((prev) => prev > 0 ? prev - 1 : 0)
+        console.log("tick");
+
+      }
+    }, 1000);
+
+    return () => clearInterval(timerId)
+  }, [email, confirmed])
+
 
   return (
     <div className="h-screen grid place-content-center">
@@ -118,7 +141,17 @@ export default function Verify() {
                             </InputOTPGroup>
                           </InputOTP>
                         </FormControl>
-                        <FormDescription></FormDescription>
+                        <FormDescription className="flex items-center gap-1">
+                          <Button
+                            onClick={handleSendOtp}
+                            className={cn("p-0 m-0", {
+                              "cursor-pointer": timer === 0,
+                              "text-gray-500": timer !== 0,
+                            })}
+                            disabled={timer !== 0}
+                            type="button" variant="link">Resent OTP : </Button><span className="font-bold">{timer}</span>
+
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -141,7 +174,7 @@ export default function Verify() {
             </CardHeader>
 
             <CardFooter className="flex justify-center ">
-              <Button onClick={handleConfirm} className="w-3/5 cursor-pointer" type="submit">Confirm</Button>
+              <Button onClick={handleSendOtp} className="w-3/5 cursor-pointer" type="submit">Confirm</Button>
             </CardFooter>
           </Card>
         )

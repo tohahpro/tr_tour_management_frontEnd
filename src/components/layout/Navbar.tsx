@@ -15,6 +15,8 @@ import {
 import brandlogo from "@/assets/icons/brand-logo.png"
 import { ModeToggle } from "./ModeToggler"
 import { Link } from "react-router"
+import { authApi, useLogoutMutation, useUserInfoQuery } from "@/redux/features/auth/auth.api"
+import { useDispatch } from "react-redux"
 
 // Navigation links with icons for desktop icon-only navigation
 const navigationLinks = [
@@ -34,6 +36,14 @@ const navigationLinks = [
 
 export default function Navbar() {
   // const id = useId()
+  const { data } = useUserInfoQuery(undefined)
+  const [logout] = useLogoutMutation()
+  const dispatch = useDispatch()
+
+  const handleLogout= async() =>{
+    await logout(undefined)
+    dispatch(authApi.util.resetApiState())
+  }
 
   return (
     <header className="border-b px-4 md:px-6">
@@ -83,11 +93,21 @@ export default function Navbar() {
           {/* Mobile menu trigger */}
           <Popover>
             {/* User menu */}
-            <Button asChild
-            className="text-sm">
-              <Link to={"/login"}>Login</Link>
-            </Button>
             {/* <UserMenu /> */}
+
+            {
+              data?.data?.email ? (
+                <Button onClick={handleLogout} variant={"outline"} className="text-sm">
+                  Logout
+                </Button>
+              ) : (
+                <Button asChild
+                  className="text-sm">
+                  <Link to={"/login"}>Login</Link>
+                </Button>
+              )
+            }
+            
             <PopoverTrigger asChild>
               <Button
                 className="group size-8 md:hidden"
@@ -130,11 +150,11 @@ export default function Navbar() {
                     return (
                       <NavigationMenuItem key={index} className="w-full">
                         <NavigationMenuLink
-                        asChild
+                          asChild
                           className="flex-row items-center gap-2 py-1.5"
                         >
                           <Link to={link.href}>{link.label}</Link>
-                          
+
                         </NavigationMenuLink>
                       </NavigationMenuItem>
                     )

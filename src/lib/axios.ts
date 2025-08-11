@@ -4,6 +4,7 @@ import axios from 'axios';
 
 export const axiosInstance = axios.create({
   baseURL: config.baseURL,
+  withCredentials: true,
   //   timeout: 1000
 });
 

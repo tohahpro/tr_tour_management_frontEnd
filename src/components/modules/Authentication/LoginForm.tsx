@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import config from "@/config/index.config";
 import { cn } from "@/lib/utils";
 import { useLoginMutation } from "@/redux/features/auth/auth.api";
 import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
@@ -23,18 +25,18 @@ export function LoginForm({
       const res = await login(data).unwrap();
       toast.success("Logged In Successful")
       console.log(res);
-    } catch (err) {
+    } catch (err : any) {
       console.error(err)
       // if (err.status === 401) {
       //   toast.error("Your account is not Verified.")
       //   navigate("/verify", {state: data.email})
       // }
-      if(err.data.message === "Password Dose Not Exist"){
+      if (err.data.message === "Password Dose Not Exist") {
         toast.error("Your Password is Incorrect ")
       }
-      if(err.data.message === "User is not verified"){
+      if (err.data.message === "User is not verified") {
         toast.error("Your account is not Verified.")
-        navigate("/verify", {state: data.email})
+        navigate("/verify", { state: data.email })
       }
     }
   }
@@ -100,6 +102,7 @@ export function LoginForm({
         </div>
 
         <Button
+          onClick={() => window.open(`${config.baseURL}/auth/google`)}
           type="button"
           variant="outline"
           className="w-full cursor-pointer"

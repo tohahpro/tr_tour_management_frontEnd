@@ -5,9 +5,9 @@ import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Verify from "@/pages/Verify";
 import { createBrowserRouter } from "react-router"
-import Bookings from "@/pages/User/Bookings";
 import { generateRoutes } from "@/utils/generateRoutes";
 import { adminSidebarItems } from "./adminSidebarItems";
+import { userSidebarItems } from "./userSidebarItems";
 
 const router = createBrowserRouter([
     {
@@ -28,12 +28,7 @@ const router = createBrowserRouter([
     {
         Component: DashboardLayout,
         path: '/user',
-        children: [
-            {
-                Component: Bookings,
-                path: 'bookings'
-            }
-        ]
+        children: [...generateRoutes(userSidebarItems)]
     },
     {
         Component: Login,

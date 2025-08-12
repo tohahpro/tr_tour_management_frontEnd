@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import Password from "@/components/ui/Password";
 import config from "@/config/index.config";
 import { cn } from "@/lib/utils";
 import { useLoginMutation } from "@/redux/features/auth/auth.api";
@@ -22,9 +23,9 @@ export function LoginForm({
     console.log(data);
 
     try {
-      const res = await login(data).unwrap();
+      await login(data).unwrap();
       toast.success("Logged In Successful")
-      console.log(res);
+      navigate('/')
     } catch (err : any) {
       console.error(err)
       // if (err.status === 401) {
@@ -77,12 +78,7 @@ export function LoginForm({
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="********"
-                      {...field}
-                      value={field.value || ""}
-                    />
+                    <Password {...field}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

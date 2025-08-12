@@ -17,30 +17,26 @@ import { ModeToggle } from "./ModeToggler"
 import { Link } from "react-router"
 import { authApi, useLogoutMutation, useUserInfoQuery } from "@/redux/features/auth/auth.api"
 import { useDispatch } from "react-redux"
+import { role } from "@/constants/role"
 
 // Navigation links with icons for desktop icon-only navigation
 const navigationLinks = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
+  { href: "/", label: "Home", role: "PUBLIC" },
+  { href: "/about", label: "About", role: "PUBLIC" },
+  { href: "/admin", label: "Dashboard", role: role.admin },
+  { href: "/admin", label: "Dashboard", role: role.superAdmin },
+  { href: "/user", label: "Dashboard", role: role.user },
 
 ]
 
-// Language options
-// const languages = [
-//   { value: "en", label: "En" },
-//   { value: "es", label: "Es" },
-//   { value: "fr", label: "Fr" },
-//   { value: "de", label: "De" },
-//   { value: "ja", label: "Ja" },
-// ]
 
 export default function Navbar() {
-  // const id = useId()
+  
   const { data } = useUserInfoQuery(undefined)
   const [logout] = useLogoutMutation()
   const dispatch = useDispatch()
 
-  const handleLogout= async() =>{
+  const handleLogout = async () => {
     await logout(undefined)
     dispatch(authApi.util.resetApiState())
   }
@@ -52,10 +48,9 @@ export default function Navbar() {
         <div className="flex flex-1 items-center gap-2">
 
           {/* Logo */}
-          <a href="/" className="text-primary flex items-center hover:text-primary/90">
+          <Link to="/" className="text-primary flex items-center hover:text-primary/90">
             <img className="w-2/5" src={brandlogo} alt="" />
-
-          </a>
+          </Link>
           <div className="flex items-center gap-6">
 
           </div>
@@ -68,19 +63,37 @@ export default function Navbar() {
           {/* Desktop navigation - icon only */}
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList className="flex items-start gap-0 md:gap-2">
-              {navigationLinks.map((link, index) => {
+              {navigationLinks.map((link, index) => (
+                <>
+                  {
+                    link.role === "PUBLIC" && (
+                      <NavigationMenuItem key={index} className="w-full">
+                        <NavigationMenuLink asChild>
+                          <Link
+                            className="flex-row items-center gap-2 py-1.5"
+                            to={link.href}>{link.label}
+                          </Link>
+                        </NavigationMenuLink>
+                      </NavigationMenuItem>
+                    )
+                  }
 
-                return (
-                  <NavigationMenuItem key={index} className="w-full">
-                    <NavigationMenuLink asChild>
-                      <Link
-                        className="flex-row items-center gap-2 py-1.5"
-                        to={link.href}>{link.label}
-                      </Link>
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
-                )
-              })}
+                  {
+                    link.role === data?.data?.role && (
+                      <NavigationMenuItem key={index} className="w-full">
+                        <NavigationMenuLink asChild>
+                          <Link
+                            className="flex-row items-center gap-2 py-1.5"
+                            to={link.href}>{link.label}
+                          </Link>
+                        </NavigationMenuLink>
+                      </NavigationMenuItem>
+                    )
+                  }
+                </>
+
+
+              ))}
             </NavigationMenuList>
           </NavigationMenu>
 
@@ -107,7 +120,7 @@ export default function Navbar() {
                 </Button>
               )
             }
-            
+
             <PopoverTrigger asChild>
               <Button
                 className="group size-8 md:hidden"

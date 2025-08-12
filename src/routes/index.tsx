@@ -1,13 +1,13 @@
 import App from "@/App";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import About from "@/pages/About";
-import Analytics from "@/pages/Admin/Analytics";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Verify from "@/pages/Verify";
 import { createBrowserRouter } from "react-router"
 import Bookings from "@/pages/User/Bookings";
-import AddTour from "@/pages/Admin/AddTour";
+import { generateRoutes } from "@/utils/generateRoutes";
+import { adminSidebarItems } from "./adminSidebarItems";
 
 const router = createBrowserRouter([
     {
@@ -23,16 +23,7 @@ const router = createBrowserRouter([
     {
         Component: DashboardLayout,
         path: '/admin',
-        children: [
-            {
-                Component: Analytics,
-                path: 'analytics'
-            },
-            {
-                Component: AddTour,
-                path: 'add-tour'
-            },
-        ]
+        children: [...generateRoutes(adminSidebarItems)]
     },
     {
         Component: DashboardLayout,

@@ -11,7 +11,7 @@ export const axiosInstance = axios.create({
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
   function (config) {
-    console.log("axios", config);
+    // console.log("axios", config);
     return config;
   }, function (error) {
     return Promise.reject(error);
@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   function onFulfilled(response) {
-    console.log("axios", response);
+    // console.log("axios", response);
     return response;
   }, function onRejected(error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger

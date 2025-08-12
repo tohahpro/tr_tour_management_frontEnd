@@ -21,7 +21,7 @@ import { useUserInfoQuery } from "@/redux/features/auth/auth.api"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
-  const {data : userData} = useUserInfoQuery(undefined)
+  const { data: userData } = useUserInfoQuery(undefined)
 
 
 
@@ -32,7 +32,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <img className="w-2/5" src={brandLogo} alt="" />
+        <Link to={'/'}>
+          <img className="w-2/5" src={brandLogo} alt="" />
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         {/* We create a SidebarGroup for each parent. */}

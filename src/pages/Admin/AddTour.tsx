@@ -1,3 +1,4 @@
+import MultipleImageUploader from "@/components/MultipleImageUploader";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,21 +6,26 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import type { FileMetadata } from "@/hooks/use-file-upload";
 import { cn } from "@/lib/utils";
 import { useGetDivisionsQuery } from "@/redux/features/Division/Division.api";
-import { useGetTourTypeQuery } from "@/redux/features/Tour/Tour.api";
+import { useAddTourMutation, useGetTourTypeQuery } from "@/redux/features/Tour/Tour.api";
 import { format, formatISO } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
+import { toast } from "sonner";
 
 
 
 export default function AddTour() {
 
+  const [images, setImages] = useState<(File | FileMetadata)[]>([])
+  
   const { data: tourTypeData, isLoading: tourTypeLoading } = useGetTourTypeQuery(undefined)
-
   const { data: divisionData, isLoading: divisionLoading } = useGetDivisionsQuery(undefined)
-
+  const [addTour] = useAddTourMutation();
 
   const tourTypeOptions = tourTypeData?.data?.map((item: { _id: string; name: string }) => ({
     value: item._id,
@@ -31,32 +37,38 @@ export default function AddTour() {
     label: item.name
   }));
 
-  console.log(tourTypeOptions);
-
-
   const form = useForm({
-    defaultValues:{
+    defaultValues: {
       title: "",
-      tourDivision: "",
+      division: "",
       tourType: "",
       description: "",
       startDate: "",
-      endDate: "",
+      endDate: ""
     }
   })
 
-
-  const handleSubmit: SubmitHandler<FieldValues> =(data)=>{
-    const tourData={
+const handleSubmit: SubmitHandler<FieldValues> = async (data) => {
+  const toastId = toast.loading("loading..")  
+  const tourData={
       ...data,
-      startDate: formatISO(data.startDate),
-      endDate: formatISO(data.endDate),
-      
+      startDate : formatISO(data.startDate),
+      endDate : formatISO(data.endDate),
     }
+    const formData = new FormData();
 
-    console.log(tourData)
-    
-  }
+    formData.append("data", JSON.stringify(tourData));
+    images.forEach((image)=> formData.append("files", image as File))      
+    try {
+      await addTour(formData).unwrap()
+      toast.success("Tour Created Successfully.", {id: toastId})   
+      form.reset()
+    } catch (error) {
+      toast.error(data.message)
+      console.log(error);      
+    }    
+  };
+
   return (
     <div>
       <div className="w-full max-w-4xl mx-auto px-5 mt-16">
@@ -70,21 +82,24 @@ export default function AddTour() {
               <form
                 id="add-tour-form"
                 className="space-y-5"
-              onSubmit={form.handleSubmit(handleSubmit)}
+                onSubmit={form.handleSubmit(handleSubmit)}
               >
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tour Title</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="flex gap-5">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel>Tour Title</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                </div>
                 <div className="flex gap-5">
                   <FormField
                     control={form.control}
@@ -117,7 +132,7 @@ export default function AddTour() {
                               selected={new Date(field.value)}
                               onSelect={field.onChange}
                               disabled={(date) =>
-                                date < new Date(new Date().setDate(new Date().getDate() - 1) )
+                                date < new Date(new Date().setDate(new Date().getDate() - 1))
                               }
                               captionLayout="dropdown"
                             />
@@ -209,7 +224,7 @@ export default function AddTour() {
 
                   <FormField
                     control={form.control}
-                    name="tourDivision"
+                    name="division"
                     render={({ field }) => (
                       <FormItem className="flex-1">
                         <FormLabel>Tour Division</FormLabel>
@@ -236,6 +251,26 @@ export default function AddTour() {
                       </FormItem>
                     )}
                   />
+
+                </div>
+
+                <div className="flex gap-5 items-stretch">
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel>Tour Title</FormLabel>
+                        <FormControl>
+                          <Textarea className="min-h-44" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="flex-1">
+                    <MultipleImageUploader onChange={setImages} />
+                  </div>
 
                 </div>
 

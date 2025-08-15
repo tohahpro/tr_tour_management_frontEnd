@@ -12,9 +12,9 @@ import { cn } from "@/lib/utils";
 import { useGetDivisionsQuery } from "@/redux/features/Division/Division.api";
 import { useAddTourMutation, useGetTourTypeQuery } from "@/redux/features/Tour/Tour.api";
 import { format, formatISO } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
+import { useFieldArray, useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
 
 
@@ -22,7 +22,7 @@ import { toast } from "sonner";
 export default function AddTour() {
 
   const [images, setImages] = useState<(File | FileMetadata)[]>([])
-  
+
   const { data: tourTypeData, isLoading: tourTypeLoading } = useGetTourTypeQuery(undefined)
   const { data: divisionData, isLoading: divisionLoading } = useGetDivisionsQuery(undefined)
   const [addTour] = useAddTourMutation();
@@ -44,29 +44,70 @@ export default function AddTour() {
       tourType: "",
       description: "",
       startDate: "",
-      endDate: ""
+      endDate: "",
+      included: [{ value: "" }],
+      excluded: [{ value: "" }],
+      amenities: [{ value: "" }],
+      tourPlan: [{ value: "" }],
     }
   })
 
-const handleSubmit: SubmitHandler<FieldValues> = async (data) => {
-  const toastId = toast.loading("loading..")  
-  const tourData={
+  const {
+    fields: includedFields,
+    append: includedAppend,
+    remove: includedRemove
+  } = useFieldArray({
+    control: form.control,
+    name: "included",
+  })
+  const {
+    fields: excludedFields,
+    append: excludedAppend,
+    remove: excludedRemove
+  } = useFieldArray({
+    control: form.control,
+    name: "excluded",
+  })
+  const { 
+    fields: amenitiesFields, 
+    append: amenitiesAppend, 
+    remove: amenitiesRemove 
+  } = useFieldArray({
+    control: form.control,
+    name: "amenities",
+  })
+  const { 
+    fields: tourPlanFields, 
+    append: tourPlanAppend, 
+    remove: tourPlanRemove
+  } = useFieldArray({
+    control: form.control,
+    name: "tourPlan",
+  })
+
+  const handleSubmit: SubmitHandler<FieldValues> = async (data) => {
+    const toastId = toast.loading("loading..")
+    const tourData = {
       ...data,
-      startDate : formatISO(data.startDate),
-      endDate : formatISO(data.endDate),
+      startDate: formatISO(data.startDate),
+      endDate: formatISO(data.endDate),
+      included: data.included.map((item: { value: string }) => item.value),
+      excluded: data.excluded.map((item: { value: string }) => item.value),
+      amenities: data.amenities.map((item: { value: string }) => item.value),
+      tourPlan: data.tourPlan.map((item: { value: string }) => item.value)
     }
     const formData = new FormData();
 
     formData.append("data", JSON.stringify(tourData));
-    images.forEach((image)=> formData.append("files", image as File))      
+    images.forEach((image) => formData.append("files", image as File))
     try {
       await addTour(formData).unwrap()
-      toast.success("Tour Created Successfully.", {id: toastId})   
+      toast.success("Tour Created Successfully.", { id: toastId })
       form.reset()
     } catch (error) {
       toast.error(data.message)
-      console.log(error);      
-    }    
+      console.log(error);
+    }
   };
 
   return (
@@ -98,7 +139,7 @@ const handleSubmit: SubmitHandler<FieldValues> = async (data) => {
                       </FormItem>
                     )}
                   />
-                  
+
                 </div>
                 <div className="flex gap-5">
                   <FormField
@@ -211,7 +252,7 @@ const handleSubmit: SubmitHandler<FieldValues> = async (data) => {
                             <SelectContent>
                               {
                                 tourTypeOptions?.map((item: { label: string; value: string }) => (
-                                  <SelectItem value={item.value}>{item.label}</SelectItem>
+                                  <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>
                                 ))
                               }
                             </SelectContent>
@@ -241,7 +282,7 @@ const handleSubmit: SubmitHandler<FieldValues> = async (data) => {
                             <SelectContent>
                               {
                                 divisionOptions?.map((item: { label: string; value: string }) => (
-                                  <SelectItem value={item.value}>{item.label}</SelectItem>
+                                  <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>
                                 ))
                               }
                             </SelectContent>
@@ -271,9 +312,146 @@ const handleSubmit: SubmitHandler<FieldValues> = async (data) => {
                   <div className="flex-1">
                     <MultipleImageUploader onChange={setImages} />
                   </div>
-
+                </div>
+                <div className="border-t border-muted w-full"></div>
+                <div className="flex justify-between">
+                  <p className="font-semibold text-lg">Included</p>
+                  <Button type="button" size="icon" variant="outline" onClick={() => includedAppend({ value: "" })}>
+                    <Plus />
+                  </Button>
+                </div>
+                <div>
+                  {
+                    includedFields.map((item, index) => (
+                      <div className="space-y-4 flex gap-3">
+                        <FormField
+                          control={form.control}
+                          name={`included.${index}.value`}
+                          key={item.id}
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
+                              <FormControl>
+                                <Input {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          variant="destructive"
+                          type="button"
+                          onClick={() => includedRemove(index)}
+                          className=" cursor-pointer">
+                          <Trash2 />
+                        </Button>
+                      </div>
+                    ))
+                  }
                 </div>
 
+                <div className="flex justify-between">
+                  <p className="font-semibold text-lg">Excluded</p>
+                  <Button type="button" size="icon" variant="outline" onClick={() => excludedAppend({ value: "" })}>
+                    <Plus />
+                  </Button>
+                </div>
+                <div>
+                  {
+                    excludedFields.map((item, index) => (
+                      <div className="space-y-4 flex gap-3">
+                        <FormField
+                          control={form.control}
+                          name={`excluded.${index}.value`}
+                          key={item.id}
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
+                              <FormControl>
+                                <Input {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          variant="destructive"
+                          type="button"
+                          onClick={() => excludedRemove(index)}
+                          className="cursor-pointer">
+                          <Trash2 />
+                        </Button>
+                      </div>
+                    ))
+                  }
+                </div>
+
+                <div className="flex justify-between">
+                  <p className="font-semibold text-lg">Amenities</p>
+                  <Button type="button" size="icon" variant="outline" onClick={() => amenitiesAppend({ value: "" })}>
+                    <Plus />
+                  </Button>
+                </div>
+                <div>
+                  {
+                    amenitiesFields.map((item, index) => (
+                      <div className="space-y-4 flex gap-3">
+                        <FormField
+                          control={form.control}
+                          name={`amenities.${index}.value`}
+                          key={item.id}
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
+                              <FormControl>
+                                <Input {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          variant="destructive"
+                          type="button"
+                          onClick={() => amenitiesRemove(index)}
+                          className="cursor-pointer">
+                          <Trash2 />
+                        </Button>
+                      </div>
+                    ))
+                  }
+                </div>
+                <div className="flex justify-between">
+                  <p className="font-semibold text-lg">Tour Plan</p>
+                  <Button type="button" size="icon" variant="outline" onClick={() => tourPlanAppend({ value: "" })}>
+                    <Plus />
+                  </Button>
+                </div>
+                <div>
+                  {
+                    tourPlanFields.map((item, index) => (
+                      <div className="space-y-4 flex gap-3">
+                        <FormField
+                          control={form.control}
+                          name={`tourPlan.${index}.value`}
+                          key={item.id}
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
+                              <FormControl>
+                                <Input {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          variant="destructive"
+                          type="button"
+                          onClick={() => tourPlanRemove(index)}
+                          className="cursor-pointer">
+                          <Trash2 />
+                        </Button>
+                      </div>
+                    ))
+                  }
+                </div>
               </form>
             </Form>
           </CardContent>

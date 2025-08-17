@@ -34,11 +34,9 @@ export default function UserMenu({ handleLogout, data }: any) {
   }
 
   const info = data?.data
-  const short = info.name.includes(" ")
-    ? info.name.split(" ").slice(0, 2).map((w: string) => w.charAt(0).toUpperCase()).join("")
-    : info.name.slice(0, 1).toUpperCase();
-  const user = data?.data?.email
-  console.log(short);
+  const avatar = info?.name?.includes(" ")
+    ? info?.name.split(" ").slice(0, 2).map((w: string) => w.charAt(0).toUpperCase()).join("")
+    : info?.name.slice(0, 1).toUpperCase();
 
 
   return (
@@ -47,17 +45,17 @@ export default function UserMenu({ handleLogout, data }: any) {
         <Button variant="ghost" className="h-auto p-0 hover:bg-transparent">
           <Avatar>
             <AvatarImage src="./avatar.jpg" alt="Profile image" />
-            <AvatarFallback>{short}</AvatarFallback>
+            <AvatarFallback>{avatar}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-64" align="end">
         <DropdownMenuLabel className="flex min-w-0 flex-col">
           <span className="text-foreground truncate text-sm font-medium">
-            {info.name}
+            {info?.name}
           </span>
           <span className="text-muted-foreground truncate text-xs font-normal">
-            {user}
+            {info?.email}
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

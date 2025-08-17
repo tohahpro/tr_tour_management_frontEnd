@@ -18,6 +18,7 @@ import { Link } from "react-router"
 import { authApi, useLogoutMutation, useUserInfoQuery } from "@/redux/features/auth/auth.api"
 import { useDispatch } from "react-redux"
 import { role } from "@/constants/role"
+import UserMenu from "../ui/user-menu"
 
 // Navigation links with icons for desktop icon-only navigation
 const navigationLinks = [
@@ -32,7 +33,7 @@ const navigationLinks = [
 
 
 export default function Navbar() {
-  
+
   const { data } = useUserInfoQuery(undefined)
   const [logout] = useLogoutMutation()
   const dispatch = useDispatch()
@@ -99,26 +100,28 @@ export default function Navbar() {
           </NavigationMenu>
 
           {/* Theme toggle */}
-          <span className="hidden md:flex">
-            <ModeToggle />
-          </span>
+
           {/* Language selector */}
 
           {/* Mobile menu trigger */}
           <Popover>
-            {/* User menu */}
-            {/* <UserMenu /> */}
+
 
             {
               data?.data?.email ? (
-                <Button onClick={handleLogout} variant={"outline"} className="text-sm">
-                  Logout
-                </Button>
+                <>
+                  <UserMenu data={data} handleLogout={handleLogout} />
+                </>
               ) : (
-                <Button asChild
-                  className="text-sm">
-                  <Link to={"/login"}>Login</Link>
-                </Button>
+                <>
+                <span className="hidden md:flex">
+                    <ModeToggle />
+                  </span>
+                  <Button asChild
+                    className="text-sm">
+                    <Link to={"/login"}>Login</Link>
+                  </Button>                  
+                </>
               )
             }
 

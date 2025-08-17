@@ -15,6 +15,7 @@ import type { TRole } from "@/types";
 import Tours from "@/pages/Tour";
 import TourDetails from "@/components/modules/Tours/TourDetails";
 import Homepage from "@/pages/Homepage";
+import Booking from "@/pages/Booking";
 
 const router = createBrowserRouter([
     {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
             {
                 path: "tours",
                 Component: withAuth(Tours),
+            },
+            {
+                path: "booking/:id",
+                Component: withAuth(Booking),
             },
             {
                 path: "tours/:id",

@@ -20,4 +20,13 @@ export interface ISidebarItem {
 }
 
 
+export type ApiError = {
+  status?: number;
+  data?: {
+    success?: boolean;
+    message?: string;
+  };
+};
+
+
 export type TRole = "SUPER_ADMIN" | "ADMIN" | "USER";

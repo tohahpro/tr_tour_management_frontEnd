@@ -24,8 +24,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useTheme } from "@/hooks/useTheme"
+import { Link } from "react-router"
+import { role } from "@/constants/role"
 
 export default function UserMenu({ handleLogout, data }: any) {
+
+ 
+  
+
+  const navigationLinks = [
+    { href: "/admin", label: "Dashboard", role: role.admin },
+    { href: "/admin", label: "Dashboard", role: role.superAdmin },
+    { href: "/user", label: "Dashboard", role: role.user }
+  ]
+
+   console.log("user nav ", navigationLinks.map(item=> item.role === data?.data?.role));
 
   const { theme, setTheme } = useTheme()
 
@@ -62,7 +75,22 @@ export default function UserMenu({ handleLogout, data }: any) {
         <DropdownMenuGroup>
           <DropdownMenuItem className="cursor-pointer">
             <BoltIcon size={16} className="opacity-60" aria-hidden="true" />
-            <span>Option 1</span>
+            <Link to='/admin'>Dashboard</Link>
+            {
+              navigationLinks.map((link) => (
+                <>
+                  {
+                    link?.role === data?.data?.role && (
+                      <Link
+                        to={link.href}>{link.label}
+                      </Link>
+                    )
+                  }
+                </>
+
+              ))
+            }
+
           </DropdownMenuItem>
           <DropdownMenuItem className="cursor-pointer">
             <Layers2Icon size={16} className="opacity-60" aria-hidden="true" />
@@ -72,8 +100,10 @@ export default function UserMenu({ handleLogout, data }: any) {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem className="cursor-pointer">
-            <UserPenIcon size={16} className="opacity-60" aria-hidden="true" />
-            <span>Profile</span>
+            <Link to="/profile" className="flex gap-2">
+              <UserPenIcon size={16} className="opacity-60" aria-hidden="true" />
+              Profile
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -83,7 +113,7 @@ export default function UserMenu({ handleLogout, data }: any) {
             Logout
           </DropdownMenuItem>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator className="hidden md:flex"/>
+        <DropdownMenuSeparator className="hidden md:flex" />
         <DropdownMenuItem onClick={toggleTheme} className="p-2 cursor-pointer hidden md:flex">
           <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
           <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />

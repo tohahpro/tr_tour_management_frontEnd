@@ -16,6 +16,8 @@ import Tours from "@/pages/Tour";
 import TourDetails from "@/components/modules/Tours/TourDetails";
 import Homepage from "@/pages/Homepage";
 import Booking from "@/pages/Booking";
+import ProfilePage from "@/pages/ProfilePage";
+import ProfileUpdate from "@/components/modules/Profile/ProfileUpdate";
 
 const router = createBrowserRouter([
     {
@@ -33,6 +35,14 @@ const router = createBrowserRouter([
             {
                 path: "tours",
                 Component: withAuth(Tours),
+            },
+            {
+                path: "profile",
+                Component: withAuth(ProfilePage),
+            },
+            {
+                path: "profile/:id",
+                Component: withAuth(ProfileUpdate),
             },
             {
                 path: "booking/:id",

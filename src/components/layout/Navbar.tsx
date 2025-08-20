@@ -14,20 +14,21 @@ import {
 } from "@/components/ui/popover"
 import brandlogo from "@/assets/icons/brand-logo.png"
 import { ModeToggle } from "./ModeToggler"
-import { Link } from "react-router"
+import { Link, useLocation } from "react-router"
 import { authApi, useLogoutMutation, useUserInfoQuery } from "@/redux/features/auth/auth.api"
 import { useDispatch } from "react-redux"
 import { role } from "@/constants/role"
 import UserMenu from "../ui/user-menu"
+import { cn } from "@/lib/utils"
 
 // Navigation links with icons for desktop icon-only navigation
 const navigationLinks = [
   { href: "/", label: "Home", role: "PUBLIC" },
   { href: "/about", label: "About", role: "PUBLIC" },
-  { href: "/admin", label: "Dashboard", role: role.admin },
-  { href: "/admin", label: "Dashboard", role: role.superAdmin },
-  { href: "/user", label: "Dashboard", role: role.user },
-  { href: "/tours", label: "Tours", role: "PUBLIC" },
+  // { href: "/admin", label: "Dashboard", role: role.admin },
+  // { href: "/admin", label: "Dashboard", role: role.superAdmin },
+  // { href: "/user", label: "Dashboard", role: role.user },
+  { href: "/tours", label: "Tours", role: role.user && role.superAdmin && role.admin },
 
 ]
 
@@ -37,10 +38,15 @@ export default function Navbar() {
   const { data } = useUserInfoQuery(undefined)
   const [logout] = useLogoutMutation()
   const dispatch = useDispatch()
+  const location = useLocation()
 
   const handleLogout = async () => {
     await logout(undefined)
     dispatch(authApi.util.resetApiState())
+  }
+
+   const isActive = (href: string) => {
+    return location.pathname === href
   }
 
   return (
@@ -72,7 +78,10 @@ export default function Navbar() {
                       <NavigationMenuItem key={index} className="w-full">
                         <NavigationMenuLink asChild>
                           <Link
-                            className="flex-row items-center gap-2 py-1.5"
+                            className={cn(
+                            "flex-row items-center gap-2 py-1.5 block w-full px-2",
+                            isActive(link.href) ? "text-sidebar-primary font-medium" : ""
+                          )}
                             to={link.href}>{link.label}
                           </Link>
                         </NavigationMenuLink>
@@ -85,7 +94,10 @@ export default function Navbar() {
                       <NavigationMenuItem key={index} className="w-full">
                         <NavigationMenuLink asChild>
                           <Link
-                            className="flex-row items-center gap-2 py-1.5"
+                            className={cn(
+                            "flex-row items-center gap-2 py-1.5 block w-full px-2",
+                            isActive(link.href) ? "text-primary font-medium" : "text-muted-foreground"
+                          )}
                             to={link.href}>{link.label}
                           </Link>
                         </NavigationMenuLink>

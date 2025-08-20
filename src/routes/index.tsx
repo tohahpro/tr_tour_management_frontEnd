@@ -18,6 +18,8 @@ import Homepage from "@/pages/Homepage";
 import Booking from "@/pages/Booking";
 import ProfilePage from "@/pages/ProfilePage";
 import ProfileUpdate from "@/components/modules/Profile/ProfileUpdate";
+import { ForgotPasswordForm } from "@/components/modules/Authentication/ForgotPasswordForm";
+import { ResetPasswordForm } from "@/components/modules/Authentication/ResetPasswordForm";
 
 const router = createBrowserRouter([
     {
@@ -73,6 +75,14 @@ const router = createBrowserRouter([
     {
         Component: Login,
         path: '/login'
+    },
+    {
+        Component: ForgotPasswordForm,
+        path: '/forgot-password'
+    },
+    {
+        Component: ResetPasswordForm,
+        path: '/reset-password'
     },
     {
         Component: Register,

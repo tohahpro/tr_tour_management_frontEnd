@@ -74,8 +74,7 @@ export default function UserMenu({ handleLogout, data }: any) {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem className="cursor-pointer">
-            <BoltIcon size={16} className="opacity-60" aria-hidden="true" />
-            <Link to='/admin'>Dashboard</Link>
+            <BoltIcon size={16} className="opacity-60" aria-hidden="true" />            
             {
               navigationLinks.map((link) => (
                 <>

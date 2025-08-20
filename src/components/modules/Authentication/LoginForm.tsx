@@ -19,19 +19,13 @@ export function LoginForm({
   const [login] = useLoginMutation()
   const navigate = useNavigate()
 
-  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    console.log(data);
-
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {    
     try {
       await login(data).unwrap();
       toast.success("Logged In Successful")
       navigate('/')
-    } catch (err : any) {
-      console.error(err)
-      // if (err.status === 401) {
-      //   toast.error("Your account is not Verified.")
-      //   navigate("/verify", {state: data.email})
-      // }
+    } catch (err: any) {
+      // console.error(err)
       if (err.data.message === "Password Dose Not Exist") {
         toast.error("Your Password is Incorrect ")
       }
@@ -50,9 +44,9 @@ export function LoginForm({
           Enter your email below to login to your account
         </p>
       </div>
-      <div className="grid gap-6">
+      <div className="grid">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form id="login-button" onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 py-3">
             <FormField
               control={form.control}
               name="email"
@@ -78,17 +72,17 @@ export function LoginForm({
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Password {...field}/>
+                    <Password {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
-            <Button type="submit" className="w-full">
-              Login
-            </Button>
           </form>
+          <Link to={'/forgot-password'} className="text-xs text-chart-5 flex justify-end font-medium pb-3">Forgot Password?</Link>
+          <Button form="login-button" type="submit" className="w-full">
+            Login
+          </Button>
         </Form>
 
         <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">

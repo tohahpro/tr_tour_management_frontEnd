@@ -20,6 +20,8 @@ import ProfilePage from "@/pages/ProfilePage";
 import ProfileUpdate from "@/components/modules/Profile/ProfileUpdate";
 import { ForgotPasswordForm } from "@/components/modules/Authentication/ForgotPasswordForm";
 import { ResetPasswordForm } from "@/components/modules/Authentication/ResetPasswordForm";
+import Success from "@/pages/Payment/Success";
+import Fail from "@/pages/Payment/Fail";
 
 const router = createBrowserRouter([
     {
@@ -91,6 +93,14 @@ const router = createBrowserRouter([
     {
         Component: Verify,
         path: '/verify'
+    },    
+    {
+        Component: Success,
+        path: '/payment/success'
+    },    
+    {
+        Component: Fail,
+        path: '/payment/fail'
     },    
     {
         Component: Unauthorized,

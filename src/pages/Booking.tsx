@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useCreateBookingMutation } from "@/redux/features/booking/booking.api";
 import { useGetAllToursQuery } from "@/redux/features/Tour/Tour.api";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
@@ -12,6 +13,8 @@ export default function Booking() {
     const [totalAmount, setTotalAmount] = useState(0);
 
     const { data, isLoading, isError } = useGetAllToursQuery({ _id: id })
+    
+    const [createBooking] = useCreateBookingMutation()
 
     const tourData = data?.[0]
 
@@ -31,7 +34,23 @@ export default function Booking() {
 
 
     const handleBooking = async () => {
-        console.log();
+        let bookingData
+        if(data){
+            bookingData = {
+                tour: id,
+                guestCount: guestCount
+            }
+        }
+
+        try {
+            const res = await createBooking(bookingData).unwrap()
+            if(res.success){
+                window.open(res.data.paymentUrl)
+            }
+        } catch (error) {
+            console.log(error);
+            
+        }
 
     }
 

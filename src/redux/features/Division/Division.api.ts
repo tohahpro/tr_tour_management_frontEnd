@@ -20,10 +20,18 @@ export const DivisionApi = baseApi.injectEndpoints({
             providesTags: ["DIVISION"],
             transformResponse: (response)=> response.data
         }),
+        removeDivision: builder.mutation({
+            query: (divisionId) => ({
+                url: `/division/${divisionId}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["DIVISION"],
+        }),
     }),
 });
 
 export const {
     useAddDivisionMutation,
     useGetDivisionsQuery,
+    useRemoveDivisionMutation
 } = DivisionApi

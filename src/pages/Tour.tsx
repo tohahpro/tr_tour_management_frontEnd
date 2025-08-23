@@ -1,3 +1,4 @@
+import TourFilters from "@/components/modules/Tours/TourFilters";
 import { Button } from "@/components/ui/button";
 import { useGetAllToursQuery } from "@/redux/features/Tour/Tour.api";
 import { Link, useSearchParams } from "react-router";
@@ -10,11 +11,12 @@ export default function Tours() {
 
   const { data } = useGetAllToursQuery({ division, tourType });
 
-  console.log(data);
-  
+
   return (
-    <div className="container mx-auto px-5 py-8 grid grid-cols-12 gap-5">
-      
+    <div className="container mx-auto px-5 py-8 lg:grid grid-cols-12 gap-5">
+      <div className="col-span-3 mb-10 lg:mb-0">
+        <TourFilters />
+      </div>
       <div className="col-span-9 w-full">
         {data?.map((item) => (
           <div
@@ -34,10 +36,10 @@ export default function Tours() {
 
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xl font-bold text-primary">
-                  
-                  
-                  
-                  From ৳{item.costFrom} 
+
+
+
+                  From ৳{item.costFrom}
                 </span>
                 <span className="text-sm text-muted-foreground">
                   Max {item.maxGuest} guests

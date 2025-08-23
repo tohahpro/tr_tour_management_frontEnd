@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { useGetAllToursQuery } from "@/redux/features/Tour/Tour.api";
+import { useGetDivisionsQuery } from "@/redux/features/Division/Division.api";
+import { useGetAllToursQuery, useGetTourTypeQuery } from "@/redux/features/Tour/Tour.api";
 import { format } from "date-fns";
 import { Link, useParams } from "react-router";
 
@@ -7,11 +8,18 @@ import { Link, useParams } from "react-router";
 
 export default function TourDetails() {
 
-  const {id} = useParams()
-  console.log(id);
-  
+  const {id} = useParams()  
   const {data, isLoading} = useGetAllToursQuery({_id:id})
-  
+    
+  const {data: divisionData}= useGetDivisionsQuery(
+    {_id: data?.[0].division, fields: "name"},
+    {skip: !data}
+  )
+  const {data: tourTypeData}= useGetTourTypeQuery(
+    {_id: data?.[0]?.tourType,fields: "name"}
+  )
+  const divisionName = divisionData?.[0]?.name
+  const tourTypeName = tourTypeData?.data[0].name
   
   const tourData= data?.[0]
   
@@ -81,7 +89,10 @@ export default function TourDetails() {
                 {/* <strong>Division:</strong> {divisionData?.[0]?.name} */}
               </p>
               <p>
-                <strong>Tour Type:</strong> {tourData?.tourType}
+                <strong>Tour Type:</strong> {tourTypeName}
+              </p>
+              <p>
+                <strong>Division: </strong> {divisionName}
               </p>
               <p>
                 <strong>Min Age:</strong> {tourData?.minAge} years

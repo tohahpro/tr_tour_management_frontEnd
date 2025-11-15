@@ -72,7 +72,7 @@ export default function Navbar() {
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList className="flex items-start gap-0 md:gap-2">
               {navigationLinks.map((link, index) => (
-                <>
+                <div  key={index}>
                   {
                     link.role === "PUBLIC" && (
                       <NavigationMenuItem key={index} className="w-full">
@@ -104,7 +104,7 @@ export default function Navbar() {
                       </NavigationMenuItem>
                     )
                   }
-                </>
+                </div>
 
 
               ))}

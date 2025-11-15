@@ -36,9 +36,7 @@ export default function UserMenu({ handleLogout, data }: any) {
     { href: "/admin", label: "Dashboard", role: role.admin },
     { href: "/admin", label: "Dashboard", role: role.superAdmin },
     { href: "/user", label: "Dashboard", role: role.user }
-  ]
-
-   console.log("user nav ", navigationLinks.map(item=> item.role === data?.data?.role));
+  ]   
 
   const { theme, setTheme } = useTheme()
 

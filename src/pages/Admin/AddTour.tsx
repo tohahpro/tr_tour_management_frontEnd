@@ -95,6 +95,9 @@ export default function AddTour() {
     const toastId = toast.loading("loading..")
     const tourData = {
       ...data,
+      costFrom: Number(data.costFrom),
+      maxGuest: Number(data.maxGuest),
+      minAge: Number(data.minAge),
       startDate: formatISO(data.startDate),
       endDate: formatISO(data.endDate),
       included: data.included.map((item: { value: string }) => item.value),
@@ -179,7 +182,7 @@ export default function AddTour() {
                 </div>
                 {/* departure , arrival  */}
                 <div className="flex gap-5">
-                  
+
                   <FormField
                     control={form.control}
                     name="departureLocation"

@@ -28,7 +28,7 @@ export default function Verify() {
   // step-2 
   const [verifyOtp] = useVerifyOtpMutation();
   // step-3 
-  const [timer, setTimer] = useState(180)
+  const [timer, setTimer] = useState(30)
 
   const navigate = useNavigate()
 
@@ -49,7 +49,7 @@ export default function Verify() {
       if (res.data?.success) {
         toast.success("OTP Sent", { id: toastId })
         setConfirmed(true)
-        setTimer(180)
+        setTimer(80)
       }
     } catch (error) {
       console.log(error);

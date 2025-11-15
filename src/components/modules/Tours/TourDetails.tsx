@@ -28,8 +28,7 @@ export default function TourDetails() {
   }
 
   return (
-    <div>
-      <h1>This is TourDetails component</h1>
+    <div>      
       <div className="container mx-auto p-6">
         {/* Header */}
         <div className="flex justify-between items-center  mb-8">
